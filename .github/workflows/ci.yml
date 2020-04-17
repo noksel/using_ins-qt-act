@@ -6,8 +6,7 @@ jobs:
   build:
     steps:
     - uses: actions/checkout@v1
-    - name: Install Qt
-     uses: jurplel/install-qt-action@v2
+    - uses: jurplel/install-qt-action@v2
      with:
        version: '5.12.8'
        host: 'windows'
