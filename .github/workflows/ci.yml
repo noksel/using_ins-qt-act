@@ -32,17 +32,20 @@ jobs:
       shell: cmake -P {0}
       run: |
         execute_process(COMMAND ls .)
-
         execute_process(COMMAND ls -l $ENV{Qt5_DIR}/../..)
-        execute_process(COMMAND ls $ENV{Qt5_DIR})
+        execute_process(COMMAND ls -ld $ENV{Qt5_DIR})
         message( $ENV{PATH} )
         execute_process(COMMAND qmake -query)
         execute_process(
           COMMAND qmake "CONFIG+=release" $ENV{APP_PRO}
           RESULT_VARIABLE result
         )
+        if (NOT result EQUAL 0)
+          message(FATAL_ERROR "Bad exit status")
+        endif()
+        execute_process(COMMAND ls .)
         
-    - name: Builduild
+    - name: Build
       id: qt
       shell: cmake -P {0}
       run: |
