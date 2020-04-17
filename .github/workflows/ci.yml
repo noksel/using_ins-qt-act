@@ -1,0 +1,34 @@
+name: CI Qt Appl
+
+on: [push]
+
+jobs:
+  build:
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install Qt
+     uses: jurplel/install-qt-action@v2
+     with:
+       version: '5.12.8'
+       host: 'windows'
+       target: 'desktop'
+       arch: 'win64_mingw73'
+       dir: '${{ github.workspace }}/QT/'
+       install-deps: 'true'
+       modules: 'qtbase qttools'
+       mirror: 'http://mirrors.ocf.berkeley.edu/qt/'
+       cached: 'false'
+       
+    - name: Download Qt
+      id: qt
+      shell: cmake -P {0}
+      run: |
+        execute_process(COMMAND ls .)
+        execute_process(COMMAND ls -ld $ENV{Qt5_DIR})
+        execute_process(COMMAND ls $ENV{Qt5_DIR})
+        message( $ENV{PATH} )
+        
+
+
+
+ 
