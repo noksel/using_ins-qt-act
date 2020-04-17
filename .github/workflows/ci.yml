@@ -1,7 +1,9 @@
 name: CI Qt Appl
 
 on: [push]
-
+env:
+  APP_NAME: test_qtest
+  APP_PRO: $ENV{APP_NAME}.pro
 jobs:
   build:
     runs-on: windows-latest
@@ -25,12 +27,38 @@ jobs:
         modules: 'qtbase qttools'
         mirror: 'http://mirrors.ocf.berkeley.edu/qt/'
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
-       
-    - name: build
-      id: qt
+        
+    - name: Configure
       shell: cmake -P {0}
       run: |
         execute_process(COMMAND ls .)
-        execute_process(COMMAND ls -ld $ENV{Qt5_DIR})
+
+        execute_process(COMMAND ls -l $ENV{Qt5_DIR}/..)
         execute_process(COMMAND ls $ENV{Qt5_DIR})
-        message( $ENV{PATH} ) 
+        message( $ENV{PATH} )
+        execute_process(COMMAND qmake -query)
+        execute_process(
+          COMMAND qmake "CONFIG+=release" $ENV{APP_PRO}
+          RESULT_VARIABLE result
+        )
+        
+    - name: Builduild
+      id: qt
+      shell: cmake -P {0}
+      run: |
+        include(ProcessorCount)
+        ProcessorCount(N)
+
+        set(make_program mingw32-make -j ${N})
+        execute_process(
+          COMMAND ${make_program} -f Makefile
+          RESULT_VARIABLE result
+        )
+        
+        if (NOT result EQUAL 0)
+          message(FATAL_ERROR "Bad exit status")
+        endif()
+        
+        execute_process(COMMAND ls .)
+        execute_process(COMMAND ls $ENV{GITHUB_WORKSPACE}/release)
+        execute_process(COMMAND release/$ENV{APP_NAME})
