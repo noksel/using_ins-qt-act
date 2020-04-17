@@ -33,7 +33,7 @@ jobs:
       run: |
         execute_process(COMMAND ls .)
 
-        execute_process(COMMAND ls -l $ENV{Qt5_DIR}/..)
+        execute_process(COMMAND ls -l $ENV{Qt5_DIR}/../..)
         execute_process(COMMAND ls $ENV{Qt5_DIR})
         message( $ENV{PATH} )
         execute_process(COMMAND qmake -query)
@@ -48,7 +48,8 @@ jobs:
       run: |
         include(ProcessorCount)
         ProcessorCount(N)
-
+        
+        execute_process(COMMAND ls .)
         set(make_program mingw32-make -j ${N})
         execute_process(
           COMMAND ${make_program} -f Makefile
@@ -59,6 +60,5 @@ jobs:
           message(FATAL_ERROR "Bad exit status")
         endif()
         
-        execute_process(COMMAND ls .)
         execute_process(COMMAND ls $ENV{GITHUB_WORKSPACE}/release)
         execute_process(COMMAND release/$ENV{APP_NAME})
