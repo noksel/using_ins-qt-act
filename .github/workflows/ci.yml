@@ -7,18 +7,18 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - uses: jurplel/install-qt-action@v2
-     with:
-       version: '5.12.8'
-       host: 'windows'
-       target: 'desktop'
-       arch: 'win64_mingw73'
-       dir: '${{ github.workspace }}/QT/'
-       install-deps: 'true'
-       modules: 'qtbase qttools'
-       mirror: 'http://mirrors.ocf.berkeley.edu/qt/'
-       cached: 'false'
+      with:
+        version: '5.12.8'
+        host: 'windows'
+        target: 'desktop'
+        arch: 'win64_mingw73'
+        dir: '${{ github.workspace }}/QT/'
+        install-deps: 'true'
+        modules: 'qtbase qttools'
+        mirror: 'http://mirrors.ocf.berkeley.edu/qt/'
+        cached: 'false'
        
-    - name: Download Qt
+    - name: build
       id: qt
       shell: cmake -P {0}
       run: |
