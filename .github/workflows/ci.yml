@@ -6,19 +6,25 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1
+        with:
+          path: ../Qt
+          key: ${{ runner.os }}-QtCache
 
     - uses: actions/checkout@v1
-    - uses: jurplel/install-qt-action@v2
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
       with:
         version: '5.12.8'
         host: 'windows'
         target: 'desktop'
         arch: 'win64_mingw73'
-        dir: '${{ github.workspace }}/QT/'
         install-deps: 'true'
         modules: 'qtbase qttools'
         mirror: 'http://mirrors.ocf.berkeley.edu/qt/'
-        cached: 'false'
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
        
     - name: build
       id: qt
@@ -27,9 +33,4 @@ jobs:
         execute_process(COMMAND ls .)
         execute_process(COMMAND ls -ld $ENV{Qt5_DIR})
         execute_process(COMMAND ls $ENV{Qt5_DIR})
-        message( $ENV{PATH} )
-        
-
-
-
- 
+        message( $ENV{PATH} ) 
