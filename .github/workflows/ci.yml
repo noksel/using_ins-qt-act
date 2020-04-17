@@ -4,7 +4,9 @@ on: [push]
 
 jobs:
   build:
+    runs-on: windows-latest
     steps:
+
     - uses: actions/checkout@v1
     - uses: jurplel/install-qt-action@v2
       with:
