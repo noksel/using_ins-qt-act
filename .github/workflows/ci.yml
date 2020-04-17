@@ -3,7 +3,6 @@ name: CI Qt Appl
 on: [push]
 env:
   APP_NAME: test_qtest
-  APP_PRO: $ENV{APP_NAME}.pro
 jobs:
   build:
     runs-on: windows-latest
@@ -36,8 +35,9 @@ jobs:
         execute_process(COMMAND ls -ld $ENV{Qt5_DIR})
         message( $ENV{PATH} )
         execute_process(COMMAND qmake -query)
+        message( qmake "CONFIG+=release" $ENV{APP_PRO} )
         execute_process(
-          COMMAND qmake "CONFIG+=release" $ENV{APP_PRO}
+          COMMAND qmake "CONFIG+=release" $ENV{APP_NAME}.pro
           RESULT_VARIABLE result
         )
         if (NOT result EQUAL 0)
