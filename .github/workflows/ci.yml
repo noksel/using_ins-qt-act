@@ -33,6 +33,7 @@ jobs:
         #execute_process(COMMAND ls .)
         execute_process(COMMAND ls -ld $ENV{Qt5_DIR}/..)
         execute_process(COMMAND ls -ld $ENV{Qt5_DIR}/../..)
+        execute_process(COMMAND ls ../Qt)
         #execute_process(COMMAND ls -ld $ENV{Qt5_DIR})
         #message( $ENV{PATH} )
         #execute_process(COMMAND qmake -query)
