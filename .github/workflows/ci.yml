@@ -1,0 +1,68 @@
+name: CI Qt Appl
+
+on: [push]
+env:
+  APP_NAME: test_qtest
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1
+      with:
+        path: ../Qt
+        key: ${{ runner.os }}-QtCache
+
+    - uses: actions/checkout@v1
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+        version: '5.12.8'
+        host: 'windows'
+        target: 'desktop'
+        arch: 'win64_mingw73'
+        install-deps: 'true'
+        modules: 'qtbase qttools'
+        mirror: 'http://mirrors.ocf.berkeley.edu/qt/'
+        cached: ${{ steps.cache-qt.outputs.cache-hit }}
+        
+    - name: Configure
+      shell: cmake -P {0}
+      run: |
+        #execute_process(COMMAND ls .)
+        execute_process(COMMAND ls -ld $ENV{Qt5_DIR}/..)
+        execute_process(COMMAND ls -ld $ENV{Qt5_DIR}/../..)
+        #execute_process(COMMAND ls -ld $ENV{Qt5_DIR})
+        #message( $ENV{PATH} )
+        #execute_process(COMMAND qmake -query)
+        #message( qmake "CONFIG+=release" $ENV{APP_NAME}.pro )
+        execute_process(
+          COMMAND qmake "CONFIG+=release" $ENV{APP_NAME}.pro
+          RESULT_VARIABLE result
+        )
+        if (NOT result EQUAL 0)
+          message(FATAL_ERROR "Bad exit status")
+        endif()
+        #execute_process(COMMAND ls .)
+        
+    - name: Build
+      id: qt
+      shell: cmake -P {0}
+      run: |
+        include(ProcessorCount)
+        ProcessorCount(N)
+        
+        #execute_process(COMMAND ls .)
+        set(make_program mingw32-make -j ${N})
+        execute_process(
+          COMMAND ${make_program} -f Makefile
+          RESULT_VARIABLE result
+        )
+        
+        if (NOT result EQUAL 0)
+          message(FATAL_ERROR "Bad exit status")
+        endif()
+        
+        execute_process(COMMAND ls $ENV{GITHUB_WORKSPACE}/release)
+        execute_process(COMMAND release/$ENV{APP_NAME})
