@@ -30,12 +30,13 @@ jobs:
     - name: Configure
       shell: cmake -P {0}
       run: |
-        execute_process(COMMAND ls .)
-        execute_process(COMMAND ls -l $ENV{Qt5_DIR}/../..)
-        execute_process(COMMAND ls -ld $ENV{Qt5_DIR})
-        message( $ENV{PATH} )
-        execute_process(COMMAND qmake -query)
-        message( qmake "CONFIG+=release" $ENV{APP_PRO} )
+        #execute_process(COMMAND ls .)
+        execute_process(COMMAND ls -ld $ENV{Qt5_DIR}/..)
+        execute_process(COMMAND ls -ld $ENV{Qt5_DIR}/../..)
+        #execute_process(COMMAND ls -ld $ENV{Qt5_DIR})
+        #message( $ENV{PATH} )
+        #execute_process(COMMAND qmake -query)
+        #message( qmake "CONFIG+=release" $ENV{APP_NAME}.pro )
         execute_process(
           COMMAND qmake "CONFIG+=release" $ENV{APP_NAME}.pro
           RESULT_VARIABLE result
@@ -43,7 +44,7 @@ jobs:
         if (NOT result EQUAL 0)
           message(FATAL_ERROR "Bad exit status")
         endif()
-        execute_process(COMMAND ls .)
+        #execute_process(COMMAND ls .)
         
     - name: Build
       id: qt
@@ -52,7 +53,7 @@ jobs:
         include(ProcessorCount)
         ProcessorCount(N)
         
-        execute_process(COMMAND ls .)
+        #execute_process(COMMAND ls .)
         set(make_program mingw32-make -j ${N})
         execute_process(
           COMMAND ${make_program} -f Makefile
